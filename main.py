@@ -54,7 +54,7 @@ def publish_stats():
     message = {
         'cpu_percent': psutil.cpu_percent(1),
         'memory_percent': psutil.virtual_memory().percent,
-        'avail_disk': psutil.disk_usage('/home').percent
+        'disk_percent': psutil.disk_usage('/home').percent
     }
     print('publish stats', message)
     mqtt_client.publish(config['topics']['stats'], payload=json.dumps(message), qos=1,
@@ -64,7 +64,7 @@ def publish_stats():
 def on_connect(client, userdata, flags, rc):
     register_sensor('cpu_percent', 'CPU', 'power_factor')
     register_sensor('memory_percent', 'Memory', 'power_factor')
-    register_sensor('avail_disk', 'Available Disk', 'power_factor')
+    register_sensor('disk_percent', 'Disk', 'power_factor')
     for command in config['commands']:
         details = config['commands'][command].split('#')
         register_button(button_friendly=details[1], button=command)
@@ -83,8 +83,8 @@ mqtt_client.on_message = on_message
 
 last = time.time()
 while True:
+    mqtt_client.loop()
     current = time.time()
-    if current - last > 7:
+    if current - last > int(config['device']['update_interval_seconds']):
         last = current
         publish_stats()
-    mqtt_client.loop()

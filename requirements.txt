@@ -1,3 +1,2 @@
-mdstat==1.0.4
 paho-mqtt==1.6.1
 psutil==5.9.5
