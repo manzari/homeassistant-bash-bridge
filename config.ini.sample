@@ -1,0 +1,18 @@
+[broker]
+host = 192.168.178.123
+port = 1883
+username = user
+password = 53cre7f0r357
+
+[device]
+identifier = my_workstation
+friendly_name = Workstation
+
+[topics]
+stats = hass-bash-bridge/my_workstation/stats
+command = hass-bash-bridge/my_workstation/command
+
+[commands]
+reboot = reboot#Reboot
+shutdown = shutdown -h now#Shutdown
+
