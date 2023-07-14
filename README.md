@@ -14,7 +14,7 @@ python main.py
 ### As a service
 ```bash
 chmod +x run.sh
-nano /etc/systemd/system/hass-bash-bridge.service
+nano /etc/systemd/system/homeassistant-bash-bridge.service
 ```
 ```
 [Unit]
@@ -22,14 +22,14 @@ Description=Homeassistant Bash Bridge
 
 [Service]
 Type=simple
-ExecStart=/root/hass-bash-bridge/run.sh
+ExecStart=/root/homeassistant-bash-bridge/run.sh
 
 [Install]
 WantedBy=multi-user.target
 ```
 ```bash
 systemctl daemon-reload
-systemctl enable hass-bash-bridge.service
-systemctl start hass-bash-bridge.service
-systemctl status hass-bash-bridge.service
+systemctl enable homeassistant-bash-bridge.service
+systemctl start homeassistant-bash-bridge.service
+systemctl status homeassistant-bash-bridge.service
 ```

@@ -10,8 +10,8 @@ friendly_name = Workstation
 update_interval_seconds = 7
 
 [topics]
-stats = hass-bash-bridge/my_workstation/stats
-command = hass-bash-bridge/my_workstation/command
+stats = homeassistant-bash-bridge/my_workstation/stats
+command = homeassistant-bash-bridge/my_workstation/command
 
 [stats]
 disk_percent_path = /home
