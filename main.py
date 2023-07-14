@@ -54,7 +54,7 @@ def publish_stats():
     message = {
         'cpu_percent': psutil.cpu_percent(1),
         'memory_percent': psutil.virtual_memory().percent,
-        'disk_percent': psutil.disk_usage('/home').percent
+        'disk_percent': psutil.disk_usage(config['stats']['disk_percent_path']).percent
     }
     print('publish stats', message)
     mqtt_client.publish(config['topics']['stats'], payload=json.dumps(message), qos=1,

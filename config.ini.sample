@@ -13,6 +13,9 @@ update_interval_seconds = 7
 stats = hass-bash-bridge/my_workstation/stats
 command = hass-bash-bridge/my_workstation/command
 
+[stats]
+disk_percent_path = /home
+
 [commands]
 reboot = reboot#Reboot
 shutdown = shutdown -h now#Shutdown
