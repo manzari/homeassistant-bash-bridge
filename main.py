@@ -1,3 +1,5 @@
+import socket
+
 import paho.mqtt.client as mqtt
 import json
 import psutil
@@ -5,12 +7,14 @@ import configparser
 import subprocess
 import time
 
-config = configparser.ConfigParser()
-config.read('config.ini')
-
-mqtt_client = mqtt.Client(config['device']['identifier'] + '-client')
-mqtt_client.username_pw_set(username=config['broker']['username'], password=config['broker']['password'])
-mqtt_client.connect(config['broker']['host'], port=int(config['broker']['port']), keepalive=60, bind_address="")
+def connect():
+    if not mqtt_client.is_connected():
+        try:
+            mqtt_client.connect(config['broker']['host'], port=int(config['broker']['port']), keepalive=60,
+                                bind_address="")
+        except socket.timeout:
+            print('connection failed. will retry.')
+            connect()
 
 
 def register_sensor(attribute: str, attribute_friendly: str, device_class: str = 'None'):
@@ -27,6 +31,7 @@ def register_sensor(attribute: str, attribute_friendly: str, device_class: str =
         'state_topic': config['topics']['stats'],
         'unique_id': config['device']['identifier'] + '_' + attribute
     }
+    connect()
     mqtt_client.publish('homeassistant/sensor/' + config['device']['identifier'] + '/' + attribute + '/config',
                         payload=json.dumps(message), qos=1,
                         retain=False)
@@ -44,6 +49,7 @@ def register_button(button: str, button_friendly: str):
         'unique_id': config['device']['identifier'] + '_' + button,
         'cmd_t': config['topics']['command'] + '/' + button + '/set'
     }
+    connect()
     mqtt_client.subscribe(config['topics']['command'] + '/' + button + '/set')
     mqtt_client.publish('homeassistant/button/' + config['device']['identifier'] + '/' + button + '/config',
                         payload=json.dumps(message), qos=1,
@@ -57,6 +63,7 @@ def publish_stats():
         'disk_percent': psutil.disk_usage(config['stats']['disk_percent_path']).percent
     }
     print('publish stats', message)
+    connect()
     mqtt_client.publish(config['topics']['stats'], payload=json.dumps(message), qos=1,
                         retain=False)
 
@@ -78,6 +85,11 @@ def on_message(client, userdata, message):
             subprocess.run(details[0].split(' '))
 
 
+config = configparser.ConfigParser()
+config.read('config.ini')
+mqtt_client = mqtt.Client(config['device']['identifier'] + '-client')
+mqtt_client.username_pw_set(username=config['broker']['username'], password=config['broker']['password'])
+connect()
 mqtt_client.on_connect = on_connect
 mqtt_client.on_message = on_message
 
