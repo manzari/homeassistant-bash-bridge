@@ -7,12 +7,13 @@ import configparser
 import subprocess
 import time
 
+
 def connect():
     if not mqtt_client.is_connected():
         try:
             mqtt_client.connect(config['broker']['host'], port=int(config['broker']['port']), keepalive=60,
                                 bind_address="")
-        except socket.timeout:
+        except Exception:
             print('connection failed. will retry.')
             connect()
 
@@ -74,6 +75,7 @@ def on_connect(client, userdata, flags, rc):
     register_sensor('disk_percent', 'Disk', 'power_factor')
     for command in config['commands']:
         details = config['commands'][command].split('#')
+        print('registering button: ' + command)
         register_button(button_friendly=details[1], button=command)
 
 
